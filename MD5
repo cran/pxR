@@ -1,4 +1,4 @@
-3702503b4d13b7a39317389cbc2be8ca *DESCRIPTION
+97b9ed9b494fadc3d60bde70234baca8 *DESCRIPTION
 f9ea2877db757b4d7b45a6a93bcfac7e *NAMESPACE
 ca72c2173d771a25f8abf58ead36c6b9 *R/as.array.px.R
 74dfa3d04672edcf5b0c05d6d23be655 *R/as.data.frame.px.R
@@ -10,7 +10,7 @@ ca72c2173d771a25f8abf58ead36c6b9 *R/as.array.px.R
 da84207249b3739eac80236ffba001ed *R/write.px.R
 78ac811e085c7a1fa62785720b1eba78 *R/zzz.R
 71ccaa20365286ea120892dadef01d60 *inst/extdata/EPA_es_1.px
-13578e212865a0dd54354d69ee4e029a *inst/extdata/example.px
+f69b34a152b31c40e1587220a612a09a *inst/extdata/example.px
 fa04e84111396a0fb92e6da544894fe7 *inst/extdata/example2.px
 7c618605c044f1e1d1172a66f09306d6 *inst/extdata/example3.px
 d7825383652004cc00e2262b6687911f *inst/extdata/example4.px
