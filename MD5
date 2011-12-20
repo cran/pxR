@@ -1,10 +1,10 @@
-bbc65f9079e927cf12008bb4b98f2570 *DESCRIPTION
+f7a79aa31351250749febd222c037a29 *DESCRIPTION
 f9ea2877db757b4d7b45a6a93bcfac7e *NAMESPACE
 ca72c2173d771a25f8abf58ead36c6b9 *R/as.array.px.R
-1d527bce82dd4b28cff39a504ba9f6b3 *R/as.data.frame.px.R
+327dfc701384ab84f45f923fe8987500 *R/as.data.frame.px.R
 0e954d794f69b4d129c426b7e86e42c0 *R/as.px.R
 52a876f348bb01d04bd8d693260d9083 *R/as.px.array.R
-23c7045e8cb0da021ce8dd982e6aa522 *R/read.px.R
+6d324b2505643a5c23aa47026cc2c5c5 *R/read.px.R
 c1cb667f31d2a4974e62d3c4609583b8 *R/read.pxini.R
 129c3cc30c408f20822d32b415c5a06f *R/summary.R
 da84207249b3739eac80236ffba001ed *R/write.px.R
@@ -15,7 +15,7 @@ fa04e84111396a0fb92e6da544894fe7 *inst/extdata/example2.px
 7c618605c044f1e1d1172a66f09306d6 *inst/extdata/example3.px
 d7825383652004cc00e2262b6687911f *inst/extdata/example4.px
 cafe2b5614adb0b02aac48d640dd9e21 *man/as.array.px.Rd
-84cf04522083733bd0110e76a7c25e58 *man/as.data.frame.px.Rd
+d818c2f9c18977fb0affa5f362862e3e *man/as.data.frame.px.Rd
 f0c4d7eacc748beaaed5b393650ba645 *man/as.px.array.Rd
 8d13565925127e7585bfa2c27cc01276 *man/read.px.Rd
 2907c39ea04b6f941f52c6a0c852164e *man/summary.Rd
