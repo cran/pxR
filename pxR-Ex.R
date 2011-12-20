@@ -38,8 +38,8 @@ flush(stderr()); flush(stdout())
 
 ### ** Examples
 
-my.px.object <- read.px( system.file( "extdata", "example.px", package = "pxR") )
-my.px.data   <- as.data.frame( my.px.object )
+my.px.object <- read.px(system.file( "extdata", "example.px", package = "pxR"))
+my.px.data   <- as.data.frame(my.px.object)
 
 
 
