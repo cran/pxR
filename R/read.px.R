@@ -11,6 +11,7 @@
 #		20111210, cjgb: fixing the strsplit when the split character is contained in the data part
 #		20120329, cjgb: number strings in the DATA part can contain ";" as separators.
 #				Although deprecated, cases still lurk.
+#               20130228, cjgb: There can be ; inside quoted strings that create chaos
 #
 #################################################################
 
@@ -61,7 +62,21 @@ read.px <- function(filename, encoding = "latin1",
     tmp[2] <- gsub(";", "", tmp[2])			# removing ";" within DATA number strings
     a <- paste(tmp[1], "DATA=", tmp[2], sep = "")
 
-    a <- unlist(strsplit(a, ";"))	## ; is the logical line end in px files
+    # modification by cjgb, 20130228 concerning line separators within quoted strings
+
+    #a <- unlist(strsplit(a, ";"))	## ; is the logical line end in px files
+                                        ## but there might be ; inside quoted strings;
+                                        ## read.table skips them efficiently, therefore:
+
+    punto.coma <- str_locate_all(a, ";")[[1]][,1]	# where the ";" are
+    comillas   <- str_locate_all(a, '"')[[1]][,1]	# where the '"' are
+    cortes     <- Filter( function(x) sum(comillas < x) %% 2 == 0, punto.coma )		# ";" not after an odd number of '"'
+                                                                                        # these are the proper "cuts"
+
+    a <- str_sub(a, c(1, cortes + 1), c(cortes - 1, str_length(a)))
+
+    a <- a[!is.na(a)]
+    a <- a[a != ""]
    
     a <- sub( "=", "//=//", a )
     a <- do.call(rbind, strsplit(a, "//=//" ))
