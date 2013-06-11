@@ -5,26 +5,28 @@ Write a PC-Axis file
 }
 \description{
   
-  This function write a object of class \code{px} to a PC-Axis file 
+  This function writes an object of class \code{px} to a PC-Axis file 
 
 }
 \usage{
-write.px(obj.px ,filename, encod="ISO_8859-1")
+write.px(obj.px, filename, heading = NULL, stub = NULL,
+         fileEncoding = "ISO-8859-1")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{obj.px}{ The name of a objest of class 'px' }
   \item{filename}{ The name of the PC-Axis file to create }
-  \item{encod}{A character string describing the encoding tu use in
-    px file
-    (see \code{\link{iconv}} for details).}
+  \item{heading}{ An optional character vector with the names of variables in the HEADING part of the output file }
+  \item{stub}{ An optional character vector with the names of the variables in the STUB part of the output file }
+  \item{fileEncoding}{A character string describing the encoding to use in px file (see \code{\link{iconv}} for details)}
 }
-% \details{
-% TBA
-% }
-\value{
-  An file that can be used with  \code{PC-AXIS} program (see references for details).
+
+\details{
+  By default, the output file will have a single variable in the HEADING part of the file (columns in the matrix). 
+
+  It is possible to override the default by providing the \code{heading} and \code{stub} parameters. These are optional, non-overlapping, exhaustive character vectors of names of variables in the output matrix. 
 }
+
 \references{
 \url{http://www.scb.se/upload/PC-Axis/Support/Documents/PC-Axis_fileformat.pdf}
 }
@@ -41,18 +43,13 @@ Francisco J. Viciana Fernández, Oscar Perpiñan Lamigueiro, Carlos J. Gil Bello
   \code{\link{iconv}}
 }
 \examples{
-
-
-opx1 <- read.px(  system.file( "extdata", "example.px", package = "pxR")  )  
-write.px ( opx1, file = 'opx.px')  #  write a   copy
-opx2 <- read.px  ('opx.px')        #  read  the copy
-
-### are de same data ?
-as.array(opx1)-> a1
-as.array(opx2)-> a2
-sum(a1-a2)
-
-
+opx1 <- read.px(system.file( "extdata", "example.px", package = "pxR"))  
+\dontrun{
+	write.px(opx1, file = "opx.px")
+	write.px(opx1, file = "opx.px", 
+                   heading = c("sexo", "edad"),
+                   stub = "municipios")
+}
 }
 
 \keyword{ manip }

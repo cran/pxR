@@ -7,85 +7,135 @@
 # Authors:      fvf, cjgb, opl
 #
 # Modifications: 
-#
+#               fvf (20130618)
+#               cjgb, 20130811: added on.exit hook to close the open connection
+#               cjgb, 20130811: fixed encoding issues (testing)
+#               cjgb, 20130813: we do not generate files using KEYS (i.e., if present,
+#                         the KEYS part needs to be ignored)
+#               cjgb, 20131117: some users want to specify heading & stub precisely
+#                         in order to control the shape of the resulting matrix
 #################################################################
 
 
-write.px <- function ( obj.px, filename, encod = "ISO_8859-1" )
+write.px <- function ( obj.px, filename, heading = NULL, stub = NULL, fileEncoding = "ISO-8859-1" )
 {
-
- if ( ! inherits( obj.px, "px" ) )
-   stop('Error: object does not have the right "class"')
- 
+  
+  if ( ! inherits( obj.px, "px" ) )
+    stop("Error: object needs to have class 'px'")
+  
   ## auxiliary functions ## 
-  unquote <- function( x ){
-        gsub( '^"', "", x    )->x
-        gsub( '"$', "", x    )
+  unquote <- function(x)
+    gsub( '^"|"$', "", x)           # removes " at beginning/end of string
+  
+  requote <- function(x)            # adds dquotes (") to character vectors
+    paste( '"', unquote(x), '"', sep = "")
+    
+  wf  <- function ( ..., my.encoding = ifelse(fileEncoding == "ISO-8859-1", "latin1", "utf8") ) {
+    cadena <- paste(..., sep = "")
+    cadena <- iconv(cadena, my.encoding)
+    cat( cadena, file = con, sep = "" ) 
   }
+  ## end - auxiliary functions ##
   
-  con <- file( description = filename, open = "w", encoding = encod )
-
-  wf  <- function ( lchart ) {
-          cat(paste(lchart,sep='', collapse =''), file=con) }
+  # modify px object providing sensible default values
+  obj.px[['LAST.UPDATED']]$value <- format(Sys.time(), "%Y%m%d %H:%M:%S")
+  obj.px[['CHARSET']]$value      <- ifelse( fileEncoding == "ISO-8859-1", 'ANSI', fileEncoding )
+  obj.px$INFO$value              <- "File generated using R and package pxR (http://pxr.r-forge.r-project.org/)"
   
-  # modify px objects 
-  obj.px[['LAST.UPDATED']]$value <- 
-       format(Sys.time(), "%Y%m%d %H:%M:%S")
+  # we do not generate files that use the KEYS argument
+  obj.px$KEYS <- NULL
   
-  obj.px[['CHARSET']]$value <- ifelse( encod == "ISO_8859-1", 'ANSI',encod )
-
-  # write new file 
-  cat('',file = con,append = F) # init file
+  # obj.px names may have changed (and got - changed into . by R)
+  # we need to revert that  
+  names(obj.px) <- gsub("\\.", "-", names(obj.px))
   
-  lapply(obj.px,names) -> lcell
-  for (i in  names(lcell)[names(lcell) != 'DATA'])
-    {
-      if (length(i)==1 & lcell[[i]][1] == 'value') {
-         # Key without  variable name 
-         zz <- paste(obj.px[[i]]$value,collapse='","')
-         zz <- unquote(zz)         
-         if (i %in% c('DECIMALS','SHOWDECIMALS','ELIMINATION')) # values without quote
-                                                       # falla lectura PC-AXIS con comillas
-          {      wf( c(i,'=' , zz ,';\n')  )        
-          } else wf( c(i,'="', zz ,'";\n'))          
-         } else # meta with second name. Can be more one
-         { for (l in names(obj.px[[i]]))
-            {
-              if (i %in% c('KEYS')) # values without quote
-                {      wf ( c(i,'("',l,'")=') )
-                } else wf ( c(i,'("',l,'")=\"') )              
-              wf ( paste(obj.px[[i]][[l]],collapse='","') )
-              if (i %in% c('KEYS')) # values without quote
-              { wf ( ';\n' ) } else wf ( '";\n' )              
-            }
-         }     
+  # we want to write the output file keywords in the 'right' order
+ 
+  order.kw <- c("CHARSET", "AXIS-VERSION", "CODEPAGE", "LANGUAGE",
+                "LANGUAGES", "CREATION-DATE", "NEXT-UPDATE", "PX-SERVER",
+                "DIRECTORY-PATH", "UPDATE-FREQUENCY", "TABLEID", "SYNONYMS",
+                "DEFAULT-GRAPH", "DECIMALS", "SHOWDECIMALS", "ROUNDING",
+                "MATRIX", "AGGREGALLOWED", "AUTOPEN", "SUBJECT-CODE",
+                "SUBJECT-AREA", "CONFIDENTIAL", "COPYRIGHT", "DESCRIPTION",
+                "TITLE", "DESCRIPTIONDEFAULT", "CONTENTS", "UNITS", "STUB",
+                "HEADING", "CONTVARIABLE", "VALUES", "TIMEVAL", "CODES",
+                "DOUBLECOLUMN", "PRESTEXT", "DOMAIN", "VARIABLE-TYPE",
+                "HIERARCHIES", "HIERARCHYLEVELS", "HIERARCHYLEVELSOPEN",
+                "HIERARCHYNAMES", "MAP", "PARTITIONED", "ELIMINATION", "PR",
+                "ECISION", "LAST-UPDATED", "STOCKFA", "CFPRICES", "DAYADJ",
+                "SEASADJ",  "CONTACT", "REFPERIOD", "BASEPERIOD",
+                "DATABASE", "SOURCE", "SURVEY", "LINK", "INFOFILE",
+                "FIRST-PUBLISHED", "META-ID", "OFFICIAL-STATISTICS", "INFO",
+                "NOTEX", "NOTE", "VALUENOTEX", "VALUENOTE", "CELLNOTEX",
+                "CELLNOTE", "DATASYMBOL1", "DATASYMBOL2", "DATASYM", "BOL3",
+                "DATASYMBOL4", "DATASYMBOL5", "DATASYMBOL6", "DATASYMBOLSUM",
+                "DATASYMBOLNIL", "DATANOTECELL", "DATANOTESUM", "DATANOTE",
+                "KEYS", "ATTRIBUTE-ID", "ATTRIBUTE-TEXT", "ATTRIBUTES",
+                "PRECISION","DATA")
+ 
+  order.px  <- charmatch(names(obj.px), order.kw, nomatch=999)   # keyword no in list to end
+  new.order <- setdiff( names(obj.px)[order(order.px)], "DATA" ) # all but "DATA"
+  
+  if(! is.null(heading)){
+    if(is.null(stub))
+      stop("If heading is specified, you need also specify the stub parameter.")
+    
+    if(! setequal(c(heading, stub), c(obj.px$HEADING$value, obj.px$STUB$value)) )
+      stop("Specified heading and stub parameters differ from those in the px object")
+    
+    obj.px$HEADING$value <- heading
+    obj.px$STUB$value    <- stub
+  }
+ 
+  ## open the connection and close automatically on exit
+  con <- file( description = filename, open = "w", encoding = fileEncoding )
+  on.exit(close(con))
+  
+  ## write new file 
+  #cat('', file = con, append = F) # init file
+  
+  ## metadata part
+  for (key in new.order ) {
+    
+    # these are exceptions: no quotes
+    # e.g.: 'DECIMALS=0;'
+    if( key %in% c('DECIMALS', 'SHOWDECIMALS', 'ELIMINATION', 'COPYRIGHT', 'DESCRIPTIONDEFAULT', 'DAYADJ', 'SEASADJ')){
+      wf( key, "=")
+      wf( unquote(obj.px[[key]]$value) )
+      wf(';\n')
+      next
     }
-  # write DATA
-  zz <- as.array( obj.px )
-  ### Innecesario ---
-  # n  <- length( length(dim(zz)) ) # Nunca mayor de 2
-  # if ( n>2 ) # -- change first to second dim
-  # {
-  #   dd<-(1:n) ;  dd[1:2]<-dd[c(2:1)]
-  #  aperm(zz,dd)->zz
-  # }
-  wf ('DATA=\n')
-  ## Hay que multiplicar po 10^DECIMAL ??? 
-  formatC(zz)->zz
-  zz[zz=='NA']<-'".."'
-  write ( zz, file=con, ncolumns=dim(zz)[1], append=T )
-  cat   (";", file=con, append=T)
-  close ( con )
+    
+    # most metadata entries are like this: 
+    # 'KEY="a","b";'
+    if ( names(obj.px[[key]])[1] == 'value' ) {  
+      wf( key, "=")
+      wf( paste( requote(obj.px[[key]]$value), collapse = ',') )
+      wf(';\n')
+      next
+    } 
+    
+    # meta with second name; there can be more than one
+    for (subkey in names(obj.px[[key]])){
+      wf ( key, '("', subkey, '")=' ) 
+      wf ( paste( requote( obj.px[[key]][[subkey]] ), collapse = ',') )
+      wf ( ';\n' )              
+    }     
+  }
+ 
+  # DATA part
+  wf('DATA=\n')
+  
+  zz <- formatC(as.array(obj.px),
+                format = 'f',
+                digits = as.numeric(obj.px$DECIMALS$value),
+                drop0trailing = T, flag = '-')
+  #zz <- str_trim(zz) 
+  zz <- gsub("NA", '".."', zz)
+  
+  zz <- aperm(zz, c(rev(obj.px$HEADING$value), rev(obj.px$STUB$value)))
+  write(zz, file = con, ncolumns = sum( dim(zz)[1:length(obj.px$HEADING$value)] ), append = T )
+  
+  wf(";\n")
 }  
 
-
-### Example
-
-# opx1 <- read.px(  system.file( "extdata", "example.px", package = "pxR")  )  
-# write.px ( opx1, file = 'opx.px')  #  write a   copy
-# opx2 <- read.px  ('opx.px')        #  read  the copy
-
-### are de same data ?
-# as.array(opx1)-> a1
-# as.array(opx2)-> a2
-# sum(a1-a2)
