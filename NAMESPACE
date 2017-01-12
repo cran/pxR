@@ -1,21 +1,22 @@
-importFrom("reshape2", acast, dcast)
-importFrom("stringr", str_split)
-importFrom("plyr", mapvalues)
-import("RJSONIO")
+#import("RJSONIO")
 
-export( read.px )
-export( write.px )
-export( as.px )
-export( as.px.array )
-export( write.json.stat )
+importFrom("reshape2", acast, dcast)
+importFrom("stringr", str_split, str_locate_all, str_sub, str_length)
+importFrom("plyr", mapvalues, ldply)
+importFrom("stats", "formula", "ftable")
+importFrom("utils", "read.table", "str")
+importFrom("RJSONIO", "toJSON")
+
+
+export(read.px)
+export(write.px)
+export(as.px)
+export(as.px.array)
+export(as.px.data.frame)
+export(write.json.stat)
 
 S3method(as.data.frame, px)
 S3method(as.array, px)
 S3method(summary, px)
-
-#S3method( as.px, array )
-
-##import()
-##export()
-##exportMethods()
-##exportClas)
+S3method(as.px, array)
+S3method(as.px, data.frame)
