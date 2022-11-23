@@ -1,4 +1,4 @@
-83f2823dd090e35448672c06ffe69e9d *DESCRIPTION
+886cbc331139d71a46da1d5f65b959a8 *DESCRIPTION
 424916c1219b1312a0acfa0c417df0cf *NAMESPACE
 70914389704092302deec880d268cda8 *R/as.array.px.R
 00874ea70f6dcde0199ffacc3f861fca *R/as.data.frame.px.R
@@ -6,13 +6,13 @@
 0a50b2a6b82e6a417b14f8b9e9ad914e *R/as.px.array.R
 271ebaa77229cd8dab369010e9d7160b *R/as.px.data.frame.R
 65b46b25a1eb6dcea8c31ee005ab6a99 *R/pxK2df.R
-87294f3b39aad2710244c48a2d0e8792 *R/read.px.R
+6bac2a28fc318ebbbb80df99a9816bd8 *R/read.px.R
 c1cb667f31d2a4974e62d3c4609583b8 *R/read.pxini.R
 129c3cc30c408f20822d32b415c5a06f *R/summary.R
 ed6984f1b80c8585db2d9ab580f1b16a *R/write.json.stat.R
 9a7ae9b8e4dcda11e9586a0d238f0e37 *R/write.px.R
 78ac811e085c7a1fa62785720b1eba78 *R/zzz.R
-ba7808d5dc1e0b2eb2eee779566b5cca *README.md
+3c64c3fa529673fd8f6054df6333463b *README.md
 d7e260ffad4d4bd2d5178c01df101245 *inst/extdata/EPA_es_1.px
 440e3e903059a90126260b5e0bf25707 *inst/extdata/example.px
 2a387065ba105c5c9defd9d6c7ec8cf2 *inst/extdata/example2.px
@@ -20,7 +20,7 @@ af356bbf272370e26ce7ad8b0d8c8fda *inst/extdata/example6.px
 549715e57a9b78f9e811334d9530d421 *man/as.array.px.Rd
 4848d37f69b624a35475f65408dba187 *man/as.data.frame.px.Rd
 ce6e6947af162038309943d01ceb2a42 *man/as.px.Rd
-fb94d4868921dfe4e6e0147c6d103003 *man/read.px.Rd
+240a50c1e295e40708a42e6714cb3994 *man/read.px.Rd
 5cd869d9b69effc3a65f7365a30e4a29 *man/summary.Rd
-b2c08005cdef0d3d59413bcb8d686528 *man/write.json.stat.Rd
+744e15b16802d3073efb442411e2548f *man/write.json.stat.Rd
 e635754824da7635b401a7116aed0503 *man/write.px.Rd
